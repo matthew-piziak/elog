@@ -157,7 +157,7 @@ It will create two functions: `IDENT-log' used to do the log stuff and `IDENT-cl
 
 (cl-defmethod elog-should-log-p ((log elog-buffer-object) serverity)
   (and (oref log :buffer)
-       (call-next-method)))
+       (cl-call-next-method)))
 
 (cl-defmethod elog-insert-log ((log elog-buffer-object) serverity format &rest objects)
   (let ((buffer (get-buffer-create (oref log :buffer))))
@@ -199,11 +199,11 @@ It will create two functions: `IDENT-log' used to do the log stuff and `IDENT-cl
 
 (cl-defmethod elog-should-log-p ((log elog-file-object) serverity)
   (and (oref log :file)
-       (call-next-method)))
+       (cl-call-next-method)))
 
 (cl-defmethod elog-insert-log ((log elog-file-object) serverity format &rest objects)
   (let* ((msg (concat  (apply #'format format objects) "\n"))
-         (file-or-symbol (oref log :file)) 
+         (file-or-symbol (oref log :file))
          (file (if (stringp file-or-symbol)
                    file-or-symbol
                  (funcall file-or-symbol)))
@@ -299,13 +299,13 @@ It will create two functions: `IDENT-log' used to do the log stuff and `IDENT-cl
                                      :service port))
          (rest-args (elog--plist-remove (elog--plist-remove args :host) :port))
          (slots (append (list :conn conn) rest-args)))
-    (funcall #'call-next-method log slots)))
+    (funcall #'cl-call-next-method log slots)))
 
 (cl-defmethod elog-should-log-p ((log elog-syslog-object) serverity)
   (let ((conn (oref log :conn)))
     (and (processp conn)
          (eq 'open (process-status conn))
-         (call-next-method))))
+         (cl-call-next-method))))
 
 (cl-defmethod elog-insert-log ((log elog-syslog-object) serverity format &rest objects)
   (let* ((conn (oref log :conn))
